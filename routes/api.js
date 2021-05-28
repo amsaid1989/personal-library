@@ -1,47 +1,104 @@
 /*
-*
-*
-*       Complete the API routing below
-*       
-*       
-*/
+ *
+ *
+ *       Complete the API routing below
+ *
+ *
+ */
 
-'use strict';
+"use strict";
+
+const { response } = require("express");
+const dbOp = require("../api/dbOp");
 
 module.exports = function (app) {
+    app.route("/api/books")
+        .get(function (req, res) {
+            dbOp.getAllBooks()
+                .then((books) => {
+                    res.json(books);
+                })
+                .catch((err) => {
+                    res.json({ error: err });
+                });
+        })
 
-  app.route('/api/books')
-    .get(function (req, res){
-      //response will be array of book objects
-      //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
-    })
-    
-    .post(function (req, res){
-      let title = req.body.title;
-      //response will contain new book object including atleast _id and title
-    })
-    
-    .delete(function(req, res){
-      //if successful response will be 'complete delete successful'
-    });
+        .post(function (req, res) {
+            const title = req.body.title;
 
+            if (!title.trim()) {
+                res.send("missing required field title");
+            } else {
+                dbOp.addBook(title.trim())
+                    .then((book) => {
+                        res.json({
+                            _id: book._id,
+                            title: book.title,
+                        });
+                    })
+                    .catch((err) => {
+                        res.json({ error: err });
+                    });
+            }
+        })
 
+        .delete(function (req, res) {
+            dbOp.removeAllBooks()
+                .then((response) => {
+                    res.send("complete delete successful");
+                })
+                .catch((err) => {
+                    res.json({ error: err });
+                });
+        });
 
-  app.route('/api/books/:id')
-    .get(function (req, res){
-      let bookid = req.params.id;
-      //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
-    })
-    
-    .post(function(req, res){
-      let bookid = req.params.id;
-      let comment = req.body.comment;
-      //json res format same as .get
-    })
-    
-    .delete(function(req, res){
-      let bookid = req.params.id;
-      //if successful response will be 'delete successful'
-    });
-  
+    app.route("/api/books/:id")
+        .get(function (req, res) {
+            const bookid = req.params.id;
+
+            dbOp.getBook(bookid)
+                .then((book) => {
+                    if (!book) {
+                        res.send("no book exists");
+                    } else {
+                        res.json(book);
+                    }
+                })
+                .catch((err) => {
+                    res.json({ error: err });
+                });
+        })
+
+        .post(function (req, res) {
+            const bookid = req.params.id;
+            const comment = req.body.comment;
+
+            if (!comment.trim()) {
+                res.send("missing required field comment");
+            } else {
+                dbOp.addComment(bookid, comment.trim())
+                    .then((book) => {
+                        if (!book) {
+                            res.send("no book exists");
+                        } else {
+                            res.json(book);
+                        }
+                    })
+                    .catch((err) => {
+                        res.json({ error: err });
+                    });
+            }
+        })
+
+        .delete(function (req, res) {
+            const bookid = req.params.id;
+
+            dbOp.removeBook(bookid).then((response) => {
+                if (response.deletedCount === 0) {
+                    res.send("no book exists");
+                } else {
+                    res.send("delete successful");
+                }
+            });
+        });
 };
