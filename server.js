@@ -38,29 +38,18 @@ app.use(function (req, res, next) {
 //Start our server and tests!
 app.listen(process.env.PORT || 3000, function () {
     console.log("Listening on port " + process.env.PORT);
-    mongoose
-        .connect(process.env.DB, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useCreateIndex: true,
-        })
-        .then(() => {
-            if (process.env.NODE_ENV === "test") {
-                console.log("Running Tests...");
-                setTimeout(function () {
-                    try {
-                        runner.run();
-                    } catch (e) {
-                        let error = e;
-                        console.log("Tests are not valid:");
-                        console.log(error);
-                    }
-                }, 1500);
+    if (process.env.NODE_ENV === "test") {
+        console.log("Running Tests...");
+        setTimeout(function () {
+            try {
+                runner.run();
+            } catch (e) {
+                let error = e;
+                console.log("Tests are not valid:");
+                console.log(error);
             }
-        })
-        .catch((err) => {
-            console.error(err);
-        });
+        }, 1500);
+    }
 });
 
 module.exports = app; //for unit/functional testing

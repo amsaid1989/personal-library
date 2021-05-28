@@ -16,6 +16,17 @@ const dbOp = require("../api/dbOp");
 chai.use(chaiHttp);
 
 suite("Functional Tests", function () {
+    suiteSetup(function (done) {
+        mongoose
+            .connect(process.env.DB, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                useCreateIndex: true,
+            })
+            .then(() => {
+                done();
+            });
+    });
     /*
      * ----[EXAMPLE TEST]----
      * Each test should completely test the response of the API end-point including response status code!
