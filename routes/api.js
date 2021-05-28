@@ -25,7 +25,6 @@ module.exports = function (app) {
 
         .post(function (req, res) {
             const title = req.body.title;
-            console.log("TITLE:", title);
 
             if (!title) {
                 res.send("missing required field title");
@@ -73,9 +72,6 @@ module.exports = function (app) {
         .post(function (req, res) {
             const bookid = req.params.id;
             const comment = req.body.comment;
-
-            console.log("ID:", bookid);
-            console.log("COMMENT:", comment);
 
             if (!comment) {
                 res.send("missing required field comment");
