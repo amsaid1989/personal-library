@@ -12,19 +12,22 @@ const runner = require("./test-runner");
 
 const app = express();
 
-mongoose.Promise = Promise;
-
 app.use("/public", express.static(process.cwd() + "/public"));
 
 app.use(cors({ origin: "*" })); //USED FOR FCC TESTING PURPOSES ONLY!
 
-mongoose
-    .connect(process.env.DB, {
+mongoose.connect(
+    process.env.DB,
+    {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
-    })
-    .then(() => {
+    },
+    (err) => {
+        if (err) {
+            console.error(err);
+        }
+
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -56,10 +59,8 @@ mongoose
                 }
             }, 1500);
         }
-    })
-    .catch((err) => {
-        console.error(err);
-    });
+    }
+);
 
 //Start our server and tests!
 app.listen(process.env.PORT || 3000, function () {
