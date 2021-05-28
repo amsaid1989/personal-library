@@ -27,10 +27,10 @@ module.exports = function (app) {
             const title = req.body.title;
             console.log("TITLE:", title);
 
-            if (!title.trim()) {
+            if (!title) {
                 res.send("missing required field title");
             } else {
-                dbOp.addBook(title.trim())
+                dbOp.addBook(title)
                     .then((book) => {
                         res.json({
                             _id: book._id,
@@ -77,10 +77,10 @@ module.exports = function (app) {
             console.log("ID:", bookid);
             console.log("COMMENT:", comment);
 
-            if (!comment.trim()) {
+            if (!comment) {
                 res.send("missing required field comment");
             } else {
-                dbOp.addComment(bookid, comment.trim())
+                dbOp.addComment(bookid, comment)
                     .then((book) => {
                         if (!book) {
                             res.send("no book exists");
