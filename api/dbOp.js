@@ -30,17 +30,21 @@ module.exports = {
             if (!id) {
                 resolve(null);
             } else {
-                this.getBook(id).then((book) => {
-                    if (book) {
-                        book.comments.push(comment);
+                this.getBook(id)
+                    .then((book) => {
+                        if (book) {
+                            book.comments.push(comment);
 
-                        book.commentcount = book.comments.length;
+                            book.commentcount = book.comments.length;
 
-                        resolve(book.save());
-                    } else {
+                            resolve(book.save());
+                        } else {
+                            resolve(null);
+                        }
+                    })
+                    .catch(() => {
                         resolve(null);
-                    }
-                });
+                    });
             }
         });
     },
