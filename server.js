@@ -16,6 +16,14 @@ app.use("/public", express.static(process.cwd() + "/public"));
 
 app.use(cors({ origin: "*" })); //USED FOR FCC TESTING PURPOSES ONLY!
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+//Index page (static HTML)
+app.route("/").get(function (req, res) {
+    res.sendFile(process.cwd() + "/views/index.html");
+});
+
 mongoose
     .connect(process.env.DB, {
         useNewUrlParser: true,
@@ -23,14 +31,6 @@ mongoose
         useCreateIndex: true,
     })
     .then(() => {
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: true }));
-
-        //Index page (static HTML)
-        app.route("/").get(function (req, res) {
-            res.sendFile(process.cwd() + "/views/index.html");
-        });
-
         //For FCC testing purposes
         fccTestingRoutes(app);
 
